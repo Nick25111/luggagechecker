@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Carry-On Baggage Size Checker — by Airline</title>
+  <meta name="description" content="Check personal item and cabin baggage size and weight limits by airline. Compare up to three airlines and verify if your bag fits." />
+  <meta name="keywords" content="carry on baggage size, hand luggage, cabin bag, airline baggage, personal item size, Ryanair, easyJet, BA, Lufthansa, KLM, Air France" />
+  <link rel="canonical" href="https://www.example.com/" />
+  <meta property="og:title" content="Carry-On Baggage Size Checker — by Airline" />
+  <meta property="og:description" content="Instantly check cabin and personal item limits for major airlines and see if your bag fits." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.example.com/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Carry-On Baggage Size Checker — by Airline" />
+  <meta name="twitter:description" content="Instant airline hand-luggage checker with compare and fit tools." />
+  <meta name="theme-color" content="#2563eb" />
+
+  <!-- Performance hints for ads --><!-- Google Analytics 4 (replace G-XXXXXXXXXX) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Carry-On Baggage Size Checker",
+    "url": "https://www.example.com/",
+    "description": "Check airline hand luggage (personal item and cabin bag) size and weight limits, compare airlines, and test if your bag fits.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.example.com/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Carry-On Baggage Size Checker",
+    "applicationCategory": "TravelApplication",
+    "operatingSystem": "Web",
+    "url": "https://www.example.com/"
+  }
+  </script>
+
+  <style>
+    :root{
+      --bg: #ffffff; --panel:#ffffff; --text:#0f172a; --muted:#475569; --brand:#2563eb;
+      --ok:#16a34a; --warn:#d97706; --bad:#dc2626; --border:#e2e8f0; --radius:14px;
+      --shadow: 0 8px 30px rgba(2,6,23,.06), 0 1px 2px rgba(2,6,23,.06);
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    html,body{height:100%} *{box-sizing:border-box}
+    body{ margin:0; background:var(--bg); color:var(--text); font: 16px/1.5 var(--font); }
+    .wrap{max-width:1120px; margin:0 auto; padding:20px 20px 64px}
+
+    /* Header */
+    header{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:14px }
+    .brand{ display:flex; align-items:center; gap:14px }
+    .logoMark{ display:grid; place-items:center; width:60px; height:60px; border-radius:16px; background:#eef2ff; border:1px solid var(--border); box-shadow:var(--shadow) }
+    .logoMark svg{ width:34px; height:34px }
+    .title h1{margin:0; font-size: clamp(20px, 3.4vw, 32px); letter-spacing:.2px}
+    .title p{margin:6px 0 0; color:var(--muted); font-size:14px}
+
+    /* Top tabs */
+    .tabs{ display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin:12px 0 18px }
+    .tab{ border:1px solid var(--border); background:var(--panel); border-radius:var(--radius); box-shadow:var(--shadow); padding:14px; cursor:pointer; display:flex; justify-content:center; align-items:center; font-weight:700 }
+    .tab[aria-selected="true"]{ outline:2px solid color-mix(in oklab, var(--brand) 35%, white); }
+
+    /* Card */
+    .card{ background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px }
+    .card h2{ margin:0 0 8px; font-size: clamp(18px, 2.4vw, 22px) }
+    .sub{ color:var(--muted); font-size:13px; margin-top:2px }
+
+    .row{ display:grid; grid-template-columns: 1fr; gap:10px; }
+    @media(min-width:680px){ .row{ grid-template-columns: 1fr 1fr; } }
+
+    label{ font-size:13px; color:var(--muted); display:block; margin-bottom:6px }
+    input[type="number"], select{ width:100%; padding:12px 12px; border-radius:12px; border:1px solid #cbd5e1; background:#ffffff; color:var(--text); outline:none; transition:border .15s ease, box-shadow .15s ease; }
+    input:focus, select:focus{ border-color:#93c5fd; box-shadow: 0 0 0 3px rgba(37,99,235,.15) }
+    .selectWrap{ position:relative }
+    .selectWrap:after{ content:""; position:absolute; right:12px; top:50%; translate:0 -50%; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:7px solid #64748b; pointer-events:none }
+
+    .btn{ appearance:none; border:1px solid transparent; background:linear-gradient(180deg, #3b82f6, #2563eb); color:white; padding:12px 14px; border-radius:12px; font-weight:700; cursor:pointer; box-shadow: var(--shadow); }
+    .btn:disabled{ opacity:.6; cursor:not-allowed }
+    .btn.btn-outline{ background:#fff; color:#1e293b; border-color:#cbd5e1 }
+    .controls{ display:flex; flex-wrap:wrap; gap:10px; align-items:center }
+
+    .pill{ display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:999px; background:#f1f5f9; color:#0f172a; border:1px solid var(--border); font-size:12px; }
+
+    .kvs{ display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px; margin-top:10px }
+    .kv{ background:#f8fafc; border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; align-items:center; gap:10px }
+    .kv svg{ width:22px; height:22px; flex:0 0 auto; color:var(--brand) }
+    .kv .k{ color:#334155; font-size:12px }
+    .kv .v{ font-size:18px; font-weight:800; margin-top:2px }
+
+    .adwrap{ margin-top:18px }
+    .adwrap .adsbygoogle{ display:block; text-align:center; }
+
+    table{ width:100%; border-collapse: collapse; background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden }
+    th, td{ border-bottom:1px solid var(--border); padding:10px; text-align:left; }
+    th{ color:#0f172a; font-weight:700; font-size:13px; background:#f8fafc }
+    td{ font-size:14px; color:#0f172a }
+    tr:hover td{ background:#f1f5f9 }
+
+    .fit{ display:inline-flex; gap:8px; align-items:center; font-weight:800; }
+    .fit.ok{ color:var(--ok) } .fit.warn{ color:var(--warn) } .fit.bad{ color:var(--bad) }
+
+    .unit-toggle{ display:inline-flex; border:1px solid #cbd5e1; border-radius:10px; overflow:hidden }
+    .unit-toggle button{ background:#fff; border:none; color:#0f172a; padding:8px 10px; font-weight:800; cursor:pointer }
+    .unit-toggle button.active{ background:#eef2ff }
+
+    .airlineBrand{ display:flex; align-items:center; gap:10px; margin-top:8px }
+    .airlineBrand img{ height:24px; max-width:140px; object-fit:contain }
+
+    footer{ margin-top:24px; color:#64748b; font-size:12px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between }
+    footer a{ color:#2563eb; text-decoration:none }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="title">
+          <h1>Carry-On Baggage Size Checker — by Airline</h1>
+          <p class="sub">Pick an airline and tier, compare up to three airlines, and verify if your bag fits. (Hand luggage only)</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Top navigation boxes -->
+    <nav class="tabs" role="tablist" aria-label="Tool sections">
+      <button class="tab" id="tab-allow" role="tab" aria-selected="true" aria-controls="panel-allow">Allowance by Airline</button>
+      <button class="tab" id="tab-compare" role="tab" aria-selected="false" aria-controls="panel-compare">Compare airlines</button>
+      <button class="tab" id="tab-fit" role="tab" aria-selected="false" aria-controls="panel-fit">Does my baggage fit</button>
+    </nav>
+
+    <!-- PANEL: Allowance by Airline -->
+    <section id="panel-allow" class="card" role="tabpanel" aria-labelledby="tab-allow">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px">
+        <div>
+          <h2>Allowance by Airline</h2>
+          <p class="sub">Shows <strong>personal item</strong> and <strong>cabin</strong> bag rules with sizes & weights.</p>
+        </div>
+        <div class="airlineBrand" id="airlineBrand" aria-live="polite"></div>
+      </div>
+
+      <div class="row" style="margin-top:8px">
+        <div>
+          <label for="airline">Airline</label>
+          <div class="selectWrap"><select id="airline" name="airline"></select></div>
+        </div>
+        <div>
+          <label for="fare">Fare / Tier</label>
+          <div class="selectWrap"><select id="fare" name="fare" disabled></select></div>
+        </div>
+      </div>
+      <div class="controls" style="margin-top:10px">
+        <button id="showRules" class="btn" disabled>Show allowance</button>
+        <button id="addCompare" class="btn btn-outline" disabled>Add to compare</button>
+        <span class="pill" id="lastUpdatedPill" hidden>Data updated: <span id="lastUpdated"></span></span>
+      </div>
+
+      <div id="rules" style="margin-top:16px; display:none">
+        <!-- Personal item first -->
+        <div class="kvs" aria-live="polite">
+          <div class="kv">
+            <!-- backpack icon -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 9V7a5 5 0 0 1 10 0v2" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="5" y="9" width="14" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9 12h6" stroke="currentColor" stroke-width="1.7"/></svg>
+            <div>
+              <div class="k">Personal items allowed</div>
+              <div class="v" id="out-personal-count"></div>
+            </div>
+          </div>
+          <div class="kv">
+            <!-- size icon -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 7h16v10H4zM8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+            <div>
+              <div class="k">Personal size (max)</div>
+              <div class="v" id="out-personal-size"></div>
+            </div>
+          </div>
+          <div class="kv">
+            <!-- weight icon -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 20h12M8 20l1.5-12h5L16 20" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+            <div>
+              <div class="k">Personal weight (max)</div>
+              <div class="v" id="out-personal-weight"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cabin second -->
+        <div class="kvs" style="margin-top:8px">
+          <div class="kv">
+            <!-- trolley icon -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="5" width="10" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M10 5V4a2 2 0 0 1 4 0v1" stroke="currentColor" stroke-width="1.7"/><circle cx="9" cy="19" r="1.5" fill="currentColor"/><circle cx="15" cy="19" r="1.5" fill="currentColor"/></svg>
+            <div>
+              <div class="k">Cabin bags allowed</div>
+              <div class="v" id="out-cabin-count"></div>
+            </div>
+          </div>
+          <div class="kv">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 7h16v10H4zM8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+            <div>
+              <div class="k">Cabin size (max)</div>
+              <div class="v" id="out-cabin-size"></div>
+            </div>
+          </div>
+          <div class="kv">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 20h12M8 20l1.5-12h5L16 20" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+            <div>
+              <div class="k">Cabin weight (max)</div>
+              <div class="v" id="out-cabin-weight"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL: Compare -->
+    <section id="panel-compare" class="card" role="tabpanel" aria-labelledby="tab-compare" hidden>
+      <h2>Compare airlines</h2>
+      <p class="sub">Select up to three airlines (and tiers) to compare.</p>
+
+      <div class="row" style="margin-top:8px">
+        <div>
+          <label for="cmp-airline-1">Airline 1</label>
+          <div class="selectWrap"><select id="cmp-airline-1"></select></div>
+          <label for="cmp-fare-1" style="margin-top:8px">Tier</label>
+          <div class="selectWrap"><select id="cmp-fare-1" disabled></select></div>
+        </div>
+        <div>
+          <label for="cmp-airline-2">Airline 2</label>
+          <div class="selectWrap"><select id="cmp-airline-2"></select></div>
+          <label for="cmp-fare-2" style="margin-top:8px">Tier</label>
+          <div class="selectWrap"><select id="cmp-fare-2" disabled></select></div>
+        </div>
+        <div>
+          <label for="cmp-airline-3">Airline 3</label>
+          <div class="selectWrap"><select id="cmp-airline-3"></select></div>
+          <label for="cmp-fare-3" style="margin-top:8px">Tier</label>
+          <div class="selectWrap"><select id="cmp-fare-3" disabled></select></div>
+        </div>
+      </div>
+      <div class="controls" style="margin-top:10px">
+        <button class="btn" id="doCompare">Compare</button>
+      </div>
+
+      <div style="overflow:auto; -webkit-overflow-scrolling: touch; margin-top:10px">
+        <table id="compareTable" aria-describedby="tab-compare">
+          <thead>
+            <tr>
+              <th>Airline</th>
+              <th>Tier</th>
+              <th>Personal items</th>
+              <th>Personal size</th>
+              <th>Personal weight</th>
+              <th>Cabin bags</th>
+              <th>Cabin size</th>
+              <th>Cabin weight</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PANEL: Fit Checker -->
+    <section id="panel-fit" class="card" role="tabpanel" aria-labelledby="tab-fit" hidden>
+      <h2>Does my baggage fit?</h2>
+      <p class="sub">Enter your bag dimensions and weight. Choose whether to check against the cabin bag or personal item.</p>
+      <div class="controls" style="margin:8px 0 2px">
+        <span class="pill">Check against: <strong id="checkTargetLabel">Cabin bag</strong></span>
+        <div class="unit-toggle" role="tablist" aria-label="Measurement units">
+          <button id="unit-cm" class="active" aria-selected="true" aria-controls="bag-inputs">cm / kg</button>
+          <button id="unit-in" aria-selected="false" aria-controls="bag-inputs">in / lb</button>
+        </div>
+        <div class="controls" style="gap:6px">
+          <button id="toggleTarget" class="btn btn-outline" disabled>Switch to Personal item</button>
+        </div>
+      </div>
+      <div class="row" id="bag-inputs">
+        <div>
+          <label for="l">Length (<span class="u-l">cm</span>)</label>
+          <input id="l" type="number" min="0" step="0.1" placeholder="e.g. 55" />
+        </div>
+        <div>
+          <label for="w">Width (<span class="u-w">cm</span>)</label>
+          <input id="w" type="number" min="0" step="0.1" placeholder="e.g. 40" />
+        </div>
+        <div>
+          <label for="h">Height (<span class="u-h">cm</span>)</label>
+          <input id="h" type="number" min="0" step="0.1" placeholder="e.g. 20" />
+        </div>
+        <div>
+          <label for="weight">Weight (<span class="u-kg">kg</span>)</label>
+          <input id="weight" type="number" min="0" step="0.1" placeholder="e.g. 8" />
+        </div>
+      </div>
+      <div class="controls" style="margin-top:10px">
+        <button class="btn" id="checkFit" disabled>Check fit</button>
+        <span id="fitResult" class="fit" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <footer>
+      <p><strong>Note:</strong> We actively refresh airline tiers and dimensions from official sources; always verify on your booking confirmation.</p>
+      <p id="datasetInfo">Dataset: v0.5 • Last update: <time datetime="2025-09-05">5 Sep 2025</time></p>
+      <a href="#" id="privacyLink">Privacy & Cookies</a>
+    </footer>
+  </div>
+
+  <script>
+  // -----------------------------
+  // DATA TYPES
+  // -----------------------------
+  /** @typedef {{l:number,w:number,h:number}} Size */
+  /** @typedef {{size: Size|null, weightKg: number|null}} Allowance */
+  /** @typedef {{cabin: Allowance|null, personal: Allowance|null, cabinCount:number, personalCount:number, lastUpdated?: string}} Fare */
+
+  // Airline logos (Wikipedia SVGs)
+  const AIRLINE_LOGOS = {
+    "Ryanair": "https://upload.wikimedia.org/wikipedia/commons/9/91/Ryanair_logo.svg",
+    "easyJet": "https://upload.wikimedia.org/wikipedia/commons/2/2d/EasyJet_logo.svg",
+    "British Airways": "https://upload.wikimedia.org/wikipedia/commons/6/6e/British_Airways_Logo.svg",
+    "Lufthansa": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Lufthansa_Logo_2018.svg",
+    "Emirates": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Emirates_logo.svg",
+    "American Airlines": "https://upload.wikimedia.org/wikipedia/commons/c/cf/American_Airlines_logo_2013.svg",
+    "Delta": "https://upload.wikimedia.org/wikipedia/commons/9/98/Delta_Air_Lines_Logo.svg",
+    "United": "https://upload.wikimedia.org/wikipedia/commons/6/69/United_Airlines_Logo_2010.svg",
+    "Air France": "https://upload.wikimedia.org/wikipedia/commons/5/51/Air_France_Logo.svg",
+    "KLM": "https://upload.wikimedia.org/wikipedia/commons/a/a1/KLM_logo.svg",
+    "Wizz Air": "https://upload.wikimedia.org/wikipedia/commons/5/50/Wizz_Air_logo.svg",
+    "Turkish Airlines": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Turkish_Airlines_logo_2019.svg"
+  };
+
+  // -----------------------------
+  // DATASET (from official pages, 2025-09-05)
+  // If an airline does not specify a weight for carry-on or personal item, weight is shown as "—".
+  // For AF/KLM, the shown weight is a **combined** cap across items (per their policy).
+  // -----------------------------
+  const AIRLINES = {
+    "Ryanair": {
+      fares: {
+        "Non-Priority": {
+          cabin: null,
+          personal: { size:{l:40,w:30,h:20}, weightKg: null },
+          cabinCount: 0, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        },
+        "Priority & 2 Cabin Bags": {
+          cabin: { size:{l:55,w:40,h:20}, weightKg: 10 },
+          personal: { size:{l:40,w:30,h:20}, weightKg: null },
+          cabinCount: 1, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        }
+      }
+    },
+    "easyJet": {
+      fares: {
+        "Standard": {
+          cabin: null,
+          personal: { size:{l:45,w:36,h:20}, weightKg: 15 },
+          cabinCount: 0, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        },
+        "Large Cabin (paid)": {
+          cabin: { size:{l:56,w:45,h:25}, weightKg: 15 },
+          personal: { size:{l:45,w:36,h:20}, weightKg: 15 },
+          cabinCount: 1, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        }
+      }
+    },
+    "British Airways": {
+      fares: {
+        "Economy": {
+          cabin: { size:{l:56,w:45,h:25}, weightKg: 23 },
+          personal: { size:{l:40,w:30,h:15}, weightKg: 23 },
+          cabinCount: 1, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        },
+        "Club/Business": {
+          cabin: { size:{l:56,w:45,h:25}, weightKg: 23 },
+          personal: { size:{l:40,w:30,h:15}, weightKg: 23 },
+          cabinCount: 1, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        }
+      }
+    },
+    "Lufthansa": {
+      fares: {
+        "Economy": {
+          cabin: { size:{l:55,w:40,h:23}, weightKg: 8 },
+          personal: { size:{l:40,w:30,h:10}, weightKg: null },
+          cabinCount: 1, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        },
+        "Business": {
+          cabin: { size:{l:55,w:40,h:23}, weightKg: 8 },
+          personal: { size:{l:40,w:30,h:10}, weightKg: null },
+          cabinCount: 2, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        }
+      }
+    },
+    "Emirates": {
+      fares: {
+        "Economy": {
+          cabin: { size:{l:55,w:38,h:22}, weightKg: 7 },
+          personal: null,
+          cabinCount: 1, personalCount: 0,
+          lastUpdated: "2025-09-05"
+        },
+        "Business/First": {
+          cabin: { size:{l:55,w:38,h:22}, weightKg: 7 },
+          personal: { size:{l:45,w:35,h:20}, weightKg: 7 },
+          cabinCount: 1, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        }
+      }
+    },
+    "American Airlines": {
+      fares: {
+        "Basic/Main/Economy": {
+          cabin: { size:{l:56,w:36,h:23}, weightKg: null },
+          personal: { size:{l:45,w:35,h:20}, weightKg: null },
+          cabinCount: 1, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        }
+      }
+    },
+    "Delta": {
+      fares: {
+        "Main Cabin": {
+          cabin: { size:{l:56,w:35,h:23}, weightKg: null },
+          personal: { size:null, weightKg: null },
+          cabinCount: 1, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        }
+      }
+    },
+    "United": {
+      fares: {
+        "Economy": {
+          cabin: { size:{l:56,w:35,h:22}, weightKg: null },
+          personal: { size:{l:43,w:25,h:22}, weightKg: null },
+          cabinCount: 1, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        }
+      }
+    },
+    "Air France": {
+      fares: {
+        "Economy": {
+          cabin: { size:{l:55,w:35,h:25}, weightKg: 12 },
+          personal: { size:{l:40,w:30,h:15}, weightKg: 12 },
+          cabinCount: 1, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        },
+        "Business": {
+          cabin: { size:{l:55,w:35,h:25}, weightKg: 18 },
+          personal: { size:{l:40,w:30,h:15}, weightKg: 18 },
+          cabinCount: 2, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        }
+      }
+    },
+    "KLM": {
+      fares: {
+        "Economy": {
+          cabin: { size:{l:55,w:35,h:25}, weightKg: 12 },
+          personal: { size:{l:40,w:30,h:15}, weightKg: 12 },
+          cabinCount: 1, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        },
+        "Business": {
+          cabin: { size:{l:55,w:35,h:25}, weightKg: 18 },
+          personal: { size:{l:40,w:30,h:15}, weightKg: 18 },
+          cabinCount: 2, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        }
+      }
+    },
+    "Wizz Air": {
+      fares: {
+        "Basic": {
+          cabin: null,
+          personal: { size:{l:40,w:30,h:20}, weightKg: 10 },
+          cabinCount: 0, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        },
+        "WIZZ Priority": {
+          cabin: { size:{l:55,w:40,h:23}, weightKg: 10 },
+          personal: { size:{l:40,w:30,h:20}, weightKg: 10 },
+          cabinCount: 1, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        }
+      }
+    },
+    "Turkish Airlines": {
+      fares: {
+        "Economy": {
+          cabin: { size:{l:55,w:40,h:23}, weightKg: 8 },
+          personal: { size:{l:40,w:30,h:15}, weightKg: 4 },
+          cabinCount: 1, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        },
+        "Business": {
+          cabin: { size:{l:55,w:40,h:23}, weightKg: 8 },
+          personal: { size:{l:40,w:30,h:15}, weightKg: 4 },
+          cabinCount: 2, personalCount: 1,
+          lastUpdated: "2025-09-05"
+        }
+      }
+    }
+  };
+
+  // -----------------------------
+  // Utils
+  // -----------------------------
+  const cmToIn = (cm) => cm / 2.54; const kgToLb = (kg) => kg * 2.2046226218;
+  const fmtNum = (n, d=0) => (n==null || isNaN(n)) ? "—" : Number(n).toFixed(d);
+  const fmtSize = (size, unit) => {
+    if(!size) return "—"; const {l,w,h} = size; if(unit==='in') return `${fmtNum(cmToIn(l),1)}×${fmtNum(cmToIn(w),1)}×${fmtNum(cmToIn(h),1)} in`; return `${fmtNum(l,0)}×${fmtNum(w,0)}×${fmtNum(h,0)} cm`; };
+  const fmtWeight = (kg, unit) => { if(kg==null) return "—"; return unit==='lb' ? `${fmtNum(kgToLb(kg),1)} lb` : `${fmtNum(kg,1)} kg`; };
+  const $ = s => document.querySelector(s); const $$ = s => [...document.querySelectorAll(s)];
+
+  // Tabs
+  const tabAllow = document.getElementById('tab-allow'); const tabCompare = document.getElementById('tab-compare'); const tabFit = document.getElementById('tab-fit');
+  const panelAllow = document.getElementById('panel-allow'); const panelCompare = document.getElementById('panel-compare'); const panelFit = document.getElementById('panel-fit');
+  function selectTab(tab){ [tabAllow, tabCompare, tabFit].forEach(t => t.setAttribute('aria-selected','false')); tab.setAttribute('aria-selected','true'); const id=tab.id; panelAllow.hidden = id!=='tab-allow'; panelCompare.hidden = id!=='tab-compare'; panelFit.hidden = id!=='tab-fit'; }
+  tabAllow.addEventListener('click',()=>selectTab(tabAllow)); tabCompare.addEventListener('click',()=>selectTab(tabCompare)); tabFit.addEventListener('click',()=>selectTab(tabFit));
+
+  // Selectors
+  const airlineSelect=$('#airline'); const fareSelect=$('#fare'); const showBtn=$('#showRules'); const addBtn=$('#addCompare'); const brandBox=$('#airlineBrand');
+  const lastUpdatedPill=$('#lastUpdatedPill'); const lastUpdatedSpan=$('#lastUpdated');
+  function populateAirlinesInto(select){ select.innerHTML='<option value="" disabled selected>Select airline…</option>'; Object.keys(AIRLINES).sort().forEach(name=>{ const opt=document.createElement('option'); opt.value=name; opt.textContent=name; select.appendChild(opt); }); }
+  function populateFaresInto(select, airline){ select.innerHTML=''; select.disabled=true; if(!AIRLINES[airline]) return; Object.keys(AIRLINES[airline].fares).forEach(f=>{ const o=document.createElement('option'); o.value=f; o.textContent=f; select.appendChild(o); }); select.disabled=false; }
+  function initSelectors(){ populateAirlinesInto(airlineSelect); ['#cmp-airline-1','#cmp-airline-2','#cmp-airline-3'].forEach(id=>populateAirlinesInto($(id))); }
+  airlineSelect.addEventListener('change',()=>{ const name=airlineSelect.value; if(AIRLINES[name]){ populateFaresInto(fareSelect,name); showBtn.disabled=false; addBtn.disabled=false; $('#toggleTarget').disabled=false; $('#checkFit').disabled=false; renderAirlineLogo(name); } else { fareSelect.innerHTML=''; fareSelect.disabled=true; showBtn.disabled=true; addBtn.disabled=true; $('#toggleTarget').disabled=true; $('#checkFit').disabled=true; brandBox.innerHTML=''; } });
+  function renderAirlineLogo(name){ const src = AIRLINE_LOGOS[name]; brandBox.innerHTML = src? `<img alt="${name} logo" src="${src}" loading="lazy"/>` : ''; }
+
+  // Render rules
+  let unit='cm'; let checkTarget='cabin';
+  function getSelectedFare(){ const airline=airlineSelect.value; const fare=fareSelect.value; if(!airline||!AIRLINES[airline]||!fare) return null; return { airline, fareName: fare, fare: AIRLINES[airline].fares[fare] }; }
+  function showRules(){ const sel=getSelectedFare(); if(!sel) return; const {fare}=sel;
+    $('#out-cabin-count').textContent = typeof fare.cabinCount==='number'? String(fare.cabinCount):'—';
+    $('#out-cabin-size').textContent  = fare.cabin? (fare.cabin.size? fmtSize(fare.cabin.size, unit==='cm'?'cm':'in') : '—') : '—';
+    $('#out-cabin-weight').textContent= fare.cabin? fmtWeight(fare.cabin.weightKg, unit==='cm'?'kg':'lb') : '—';
+
+    $('#out-personal-count').textContent = typeof fare.personalCount==='number'? String(fare.personalCount):'—';
+    $('#out-personal-size').textContent  = fare.personal? (fare.personal.size? fmtSize(fare.personal.size, unit==='cm'?'cm':'in') : '—') : '—';
+    $('#out-personal-weight').textContent= fare.personal? fmtWeight(fare.personal.weightKg, unit==='cm'?'kg':'lb') : '—';
+
+    lastUpdatedSpan.textContent = sel.fare.lastUpdated || '—'; lastUpdatedPill.hidden=false; $('#rules').style.display='block'; }
+  $('#showRules').addEventListener('click', showRules);
+
+  // Units + target toggle
+  function setUnit(u){ unit=u; $('#unit-cm').classList.toggle('active',unit==='cm'); $('#unit-in').classList.toggle('active',unit==='in'); $$('.u-l,.u-w,.u-h').forEach(el=>el.textContent=unit==='cm'?'cm':'in'); $$('.u-kg').forEach(el=>el.textContent=unit==='cm'?'kg':'lb'); if(!panelAllow.hidden) showRules(); }
+  $('#unit-cm').addEventListener('click',()=>setUnit('cm')); $('#unit-in').addEventListener('click',()=>setUnit('in'));
+  function toggleTarget(){ const sel=getSelectedFare(); if(!sel) return; const hasCabin=!!sel.fare.cabin; const hasPersonal=!!sel.fare.personal; if(!hasCabin && !hasPersonal) return; if(checkTarget==='cabin' && hasPersonal) checkTarget='personal'; else if(checkTarget==='personal' && hasCabin) checkTarget='cabin'; $('#checkTargetLabel').textContent = checkTarget==='cabin'? 'Cabin bag' : 'Personal item'; $('#toggleTarget').textContent = checkTarget==='cabin'? 'Switch to Personal item':'Switch to Cabin bag'; }
+  $('#toggleTarget').addEventListener('click', toggleTarget);
+
+  // Fit checker
+  function val(v){ const n=parseFloat(v); return isNaN(n)?null:n; } function toCm(n){ return unit==='cm'? n : n*2.54; } function toKg(n){ return unit==='cm'? n : n/2.2046226218; }
+  function checkFit(){ const sel=getSelectedFare(); if(!sel) return; const target=checkTarget==='cabin'? sel.fare.cabin : sel.fare.personal; const tLabel=checkTarget==='cabin'? 'Cabin bag':'Personal item'; const L=val($('#l').value), W=val($('#w').value), H=val($('#h').value), WT=val($('#weight').value); if([L,W,H].some(v=>v==null)){ showFit('Please enter all dimensions.','warn'); return; } const Lcm=toCm(L), Wcm=toCm(W), Hcm=toCm(H); const Wkg=WT==null? null : toKg(WT); let fitsSize=false, sizeMsg='—'; let fitsWeight=false, weightMsg='—'; if(target && target.size){ const {l:wL,w:wW,h:wH}=target.size; fitsSize=(Lcm<=wL+1e-6 && Wcm<=wW+1e-6 && Hcm<=wH+1e-6); sizeMsg=`${tLabel} size ${fitsSize?'OK':'too big'} vs limit ${fmtSize(target.size, unit==='cm'?'cm':'in')}`; } else { sizeMsg=`${tLabel} not included on this tier.`; }
+    const wLimit=target? target.weightKg : null; if(wLimit==null){ fitsWeight=true; weightMsg='No specific weight limit shown'; } else { if(Wkg==null){ weightMsg='Enter bag weight to check'; } else { fitsWeight=(Wkg<=wLimit+1e-6); weightMsg=`Weight ${fitsWeight?'OK':'over'} vs ${fmtWeight(wLimit, unit==='cm'?'kg':'lb')}`; } }
+    const overall=(fitsSize&&fitsWeight)?'ok':((fitsSize||fitsWeight)?'warn':'bad'); showFit(`${sizeMsg} • ${weightMsg}`, overall); }
+  function showFit(msg,level){ const el=$('#fitResult'); el.className=`fit ${level||''}`; el.textContent=msg; }
+  $('#checkFit').addEventListener('click', checkFit);
+
+  // Compare (up to 3)
+  const cmpA1=$('#cmp-airline-1'), cmpA2=$('#cmp-airline-2'), cmpA3=$('#cmp-airline-3'); const cmpF1=$('#cmp-fare-1'), cmpF2=$('#cmp-fare-2'), cmpF3=$('#cmp-fare-3');
+  function wireCmp(aSel,fSel){ aSel.addEventListener('change',()=>{ const a=aSel.value; populateFaresInto(fSel,a); fSel.disabled=false; }); }
+  wireCmp(cmpA1,cmpF1); wireCmp(cmpA2,cmpF2); wireCmp(cmpA3,cmpF3);
+  const compareBody=document.querySelector('#compareTable tbody');
+  function doCompare(){ compareBody.innerHTML=''; [[cmpA1,cmpF1],[cmpA2,cmpF2],[cmpA3,cmpF3]].forEach(([aSel,fSel])=>{ const a=aSel.value, f=fSel.value; if(!a||!f||!AIRLINES[a]) return; const fare=AIRLINES[a].fares[f]; const unitSize=unit==='cm'?'cm':'in'; const unitWeight=unit==='cm'?'kg':'lb'; const row=document.createElement('tr'); row.innerHTML = `
+        <td>${a}</td>
+        <td>${f}</td>
+        <td>${typeof fare.personalCount==='number'? fare.personalCount : '—'}</td>
+        <td>${fare.personal? (fare.personal.size? fmtSize(fare.personal.size, unitSize):'—'):'—'}</td>
+        <td>${fare.personal? fmtWeight(fare.personal.weightKg, unitWeight):'—'}</td>
+        <td>${typeof fare.cabinCount==='number'? fare.cabinCount : '—'}</td>
+        <td>${fare.cabin? (fare.cabin.size? fmtSize(fare.cabin.size, unitSize):'—'):'—'}</td>
+        <td>${fare.cabin? fmtWeight(fare.cabin.weightKg, unitWeight):'—'}</td>`; compareBody.appendChild(row); }); }
+  $('#doCompare').addEventListener('click', doCompare);
+
+  // Init
+  (function init(){ initSelectors(); })();
+  </script>
+
+  
+</body>
+</html>
